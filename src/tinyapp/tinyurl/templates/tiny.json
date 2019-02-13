@@ -1,0 +1,20 @@
+<!docktype html>
+<html>
+<head>
+    <title>
+        My base template
+    </title>
+</head>
+
+<body>
+
+ <p>
+     {{originalurl}} : {{tinyurl}}
+</p>   
+
+   {% block content %}
+   {% endblock %}
+  
+</body>
+
+</html>
