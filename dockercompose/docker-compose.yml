@@ -1,0 +1,35 @@
+version: '3'
+
+services:
+  redis:
+    build: ./redis
+    ports:
+      - 6379:6379
+
+  postgres:
+    build: ./db
+    #image: postgres:11.1-alpine
+    restart: always
+    environment:
+      POSTGRES_DB: tinyurl_development
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 
+    ports:
+      - 5432:5432
+
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+
+  frontend:
+    build: ./django
+ #  volumes:
+ #      - ./website:/var/www/html
+    ports:
+      - 3000:8001
+    depends_on:
+      - redis
+      - postgres

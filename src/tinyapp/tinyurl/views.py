@@ -6,7 +6,12 @@ from .lib.tiny import UrlHandler
 
 
 def index(request):
-	return HttpResponse("Hello, this is the famous tinyurl app")
+	return HttpResponse("""
+            <p> Usage: 
+            <p> Shorten      ==> http://localhost:8000/tinyurl/tinyurl/?originalurl=ibm.com
+            <p> Original Url ==> http://localhost:8000/tinyurl/originalurl/?tinyurl=9kexw
+            """
+            )
 
 
 # Create your views here.
@@ -18,7 +23,7 @@ def url_detail_view(request):
 
 ORIGINAL_URL = 'originalurl'
 TINY_URL = 'tinyurl'
-def url_tiny(request):
+def url_tiny1(request):
     print (request.GET[ORIGINAL_URL])
     originalurl = None
     if ORIGINAL_URL in request.GET:
@@ -33,16 +38,27 @@ def url_tiny(request):
     else:
         context = {ORIGINAL_URL: originalurl, 'tinyurl': ''}
     return render(request, "tiny.json", context)
-    
+
+def url_tiny(request):
+    print ("url_tiny")
+    originalurl = get_param_from_request(request, ORIGINAL_URL)
+
+    if originalurl:
+        tinyurl = UrlHandler.get_tinyurl(originalurl)
+        context = {ORIGINAL_URL: originalurl, 'tinyurl': tinyurl}
+    else:
+        context = {ORIGINAL_URL: originalurl, 'tinyurl': ''}
+    return render(request, "tiny.json", context)
+  
 
 def url_original(request):
-    tinyurl = request.GET.get(ORIGINAL_URL)
+    print('url_orginal')
+    tinyurl = get_param_from_request(request, TINY_URL)
     context = {}
     context[TINY_URL] = None
     context[ORIGINAL_URL] = None
-    if not tinyurl:
-        tinyurl = request.POST.get(ORIGINAL_URL)
 
+    print(tinyurl)
     if tinyurl:
         context[TINY_URL] = tinyurl
         context[ORIGINAL_URL] = UrlHandler.get_originalurl(tinyurl)
@@ -51,3 +67,14 @@ def url_original(request):
 
 
 
+def get_param_from_request(request, key):
+    print ("getParamFromRequest. GET = {} \n POST {} \n".format(request.GET, request.POST) )
+
+    ret = None
+    if key in request.GET:
+        ret = request.GET[key]
+    else:
+        if key in request.POST:
+            ret = request.POST[key]
+
+    return ret
