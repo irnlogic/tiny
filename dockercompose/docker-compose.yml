@@ -11,7 +11,7 @@ services:
     #image: postgres:11.1-alpine
     restart: always
     environment:
-      POSTGRES_DB: tinyurl_development
+      POSTGRES_DB: postgres
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 
     ports:
