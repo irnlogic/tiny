@@ -7,7 +7,7 @@ WORKDIR /code
 ADD requirements.txt /code/
 RUN pip install -r requirements.txt
 ADD src/ /code/
-CMD python tinyapp/manage.py makemigrations
-CMD python tinyapp/manage.py migrate
-CMD ["python", "tinyapp/manage.py", "runserver", "0.0.0.0:8001"]
+ENTRYPOINT python tinyapp/manage.py makemigrations
+ENTRYPOINT python tinyapp/manage.py migrate
+ENTRYPOINT ["python", "tinyapp/manage.py", "runserver", "0.0.0.0:8001"]
 
