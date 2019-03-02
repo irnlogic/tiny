@@ -9,7 +9,7 @@
 <body>
 
  <p>
-     {{originalurl}} : {{tinyurl}}
+ {{tinyurl}} : {{originalurl}} 
 </p>   
 
    {% block content %}

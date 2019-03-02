@@ -1,9 +1,18 @@
 
 import short_url
 from tinyurl.models import Url 
-import redis
 
-g_redis = redis.Redis(host='redis', port=6379, db=0, decode_responses=True)
+try:
+    import redis
+except ModuleNotFoundError:
+    print ('Warning: You are running tinyapp without caching/redis')
+
+try:
+    g_redis = redis.Redis(host='redis', port=6379, db=0, decode_responses=True)
+except NameError:
+    g_redis = None 
+
+
 class UrlHandler():
 
     @staticmethod
@@ -20,19 +29,42 @@ class UrlHandler():
 
     @staticmethod
     def get_originalurl(tinurl):
-        global g_redis
-
-        id = short_url.decode_url(tinurl)
         
-        originalurl = g_redis.get(str(id))
+        id = short_url.decode_url(tinurl)
+   
+        # attempt to get from Redis cache
+        originalurl = UrlHandler.redis_get(str(id))
         print ("Url id is {}. Redis returned {}".format(id, originalurl))
+
         if originalurl:
             return originalurl
 
-        url = Url.objects.get(id=id)
-        print ("Url id is {}. Postgres returned {}".format(id, url.originalurl))
-        g_redis.set(str(id), url.originalurl)
+        # not in Redis, fetch from database
+        url = None
+        try:
+            url = Url.objects.get(id=id)
+            print ("Url id is {}. Postgres returned {}".format(id, url.originalurl))
+            # cache the response
+            UrlHandler.redis_set(str(id), url.originalurl)        
+        except Url.DoesNotExist:
+            print ("Invalid url code")
+            return None
+
         return url.originalurl
+
+    @staticmethod
+    def redis_get(key):
+        global g_redis
+        if g_redis:
+            return g_redis.get(key)
+        else:
+            return None
+
+    @staticmethod
+    def redis_set(key, value):
+        global g_redis
+        if g_redis:
+            g_redis.set(key, value)
 
 
 #import redis

@@ -5,11 +5,12 @@ from tinyurl.models import Url
 from .lib.tiny import UrlHandler
 
 
+## display help
 def index(request):
 	return HttpResponse("""
             <p> Usage: 
-            <p> Shorten      ==> http://localhost:8000/tinyurl/tinyurl/?originalurl=ibm.com
-            <p> Original Url ==> http://localhost:8000/tinyurl/originalurl/?tinyurl=9kexw
+            <p> Shorten      ==> http://localhost:8000/maketiny/www.ibm.com
+            <p> Original Url ==> http://localhost:8000/25t52/
             """
             )
 
@@ -23,49 +24,37 @@ def url_detail_view(request):
 
 ORIGINAL_URL = 'originalurl'
 TINY_URL = 'tinyurl'
-def url_tiny1(request):
-    print (request.GET[ORIGINAL_URL])
-    originalurl = None
-    if ORIGINAL_URL in request.GET:
-        originalurl = request.GET[ORIGINAL_URL]
-    else:
-        if ORIGINAL_URL in request.POST:
-            originalurl = request.POST[ORIGINAL_URL]
 
-    if originalurl:
-        tinyurl = UrlHandler.get_tinyurl(originalurl)
-        context = {ORIGINAL_URL: originalurl, 'tinyurl': tinyurl}
+## make tiny url
+def make_tiny(request, url=None):
+    if url:
+        tinyurl = UrlHandler.get_tinyurl(url)
+        context = {ORIGINAL_URL: url, 'tinyurl': get_full_url(request, tinyurl) }
     else:
-        context = {ORIGINAL_URL: originalurl, 'tinyurl': ''}
-    return render(request, "tiny.json", context)
+        context = {ORIGINAL_URL: url, 'tinyurl': ''}
 
-def url_tiny(request):
-    print ("url_tiny")
-    originalurl = get_param_from_request(request, ORIGINAL_URL)
-
-    if originalurl:
-        tinyurl = UrlHandler.get_tinyurl(originalurl)
-        context = {ORIGINAL_URL: originalurl, 'tinyurl': tinyurl}
-    else:
-        context = {ORIGINAL_URL: originalurl, 'tinyurl': ''}
-    return render(request, "tiny.json", context)
+    return render(request, "maketiny.json", context)
   
-
-def url_original(request):
-    print('url_orginal')
-    tinyurl = get_param_from_request(request, TINY_URL)
+## given the url code return tinyurl
+def get_original(request, tinycode=None):
     context = {}
     context[TINY_URL] = None
     context[ORIGINAL_URL] = None
 
-    print(tinyurl)
-    if tinyurl:
-        context[TINY_URL] = tinyurl
-        context[ORIGINAL_URL] = UrlHandler.get_originalurl(tinyurl)
- 
-    return render(request, "tiny.json", context)
+    if tinycode:
+        tinyurl = get_full_url(request, tinycode)
+        if tinycode:
+            context[TINY_URL] = tinyurl
+            context[ORIGINAL_URL] = UrlHandler.get_originalurl(tinycode)
+        else:
+            print("Invalid url code")
+    else:
+        print ("Missing url code")
 
+    return render(request, "geturl.json", context)
 
+def get_full_url (request, path):
+    return  request.scheme + "://" +  request.get_host() + "/" + path
 
 def get_param_from_request(request, key):
     print ("getParamFromRequest. GET = {} \n POST {} \n".format(request.GET, request.POST) )
