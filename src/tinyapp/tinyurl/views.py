@@ -38,14 +38,15 @@ def make_tiny(request, url=None):
 ## given the url code return tinyurl
 def get_original(request, tinycode=None):
     context = {}
-    context[TINY_URL] = None
-    context[ORIGINAL_URL] = None
+    context[TINY_URL] = ''
+    context[ORIGINAL_URL] = ''
 
     if tinycode:
         tinyurl = get_full_url(request, tinycode)
         if tinycode:
-            context[TINY_URL] = tinyurl
-            context[ORIGINAL_URL] = UrlHandler.get_originalurl(tinycode)
+            context[TINY_URL] = tinyurl if tinyurl else ''
+            original_url = UrlHandler.get_originalurl(tinycode)
+            context[ORIGINAL_URL] = original_url if original_url else ''
         else:
             print("Invalid url code")
     else:
