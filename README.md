@@ -6,7 +6,7 @@ Tiny url app is often used as an exemplary application to demonstrate various as
 - Given a long url, convert it to a short url
 - Given short url, return the original url
 
-Thats it, however please do not underestimate the challnge here, you can still run into nearly all of the bottlenecks that you would see in more 'complex' application :)
+Thats it, however please do not underestimate the challnge here, you can still run into nearly all of the bottlenecks that you would see in a more 'complex' application :)
 
 Our Tiny app application will be made out of 3 services:
 - Django rest server
