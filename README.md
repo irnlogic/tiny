@@ -8,7 +8,7 @@ Tiny url app is often used as an example to demonstrate various aspects of softw
 
 Thats it, however please do not underestimate the challnge here, you can still run into nearly all of the bottlenecks that you would see in a more 'complex' application :)
 
-Our Tiny app application will be made out of 3 services:
+Our 'Tiny url' application will be made out of 3 services:
 - Django rest server
 - Redis cache
 - Postgres database
