@@ -7,7 +7,8 @@ WORKDIR /code
 ADD requirements.txt /code/
 RUN pip install -r requirements.txt
 ADD src/ /code/
-ENTRYPOINT python tinyapp/manage.py makemigrations
-ENTRYPOINT python tinyapp/manage.py migrate
-ENTRYPOINT ["python", "tinyapp/manage.py", "runserver", "0.0.0.0:8001"]
-
+#RUN python tinyapp/manage.py makemigrations
+#RUN python tinyapp/manage.py migrate
+#ENTRYPOINT ["python", "tinyapp/manage.py", "runserver", "0.0.0.0:8001"]
+ADD start_django.sh /code/
+CMD ./start_django.sh
