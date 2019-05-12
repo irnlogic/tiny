@@ -1,5 +1,6 @@
 
-import short_url
+import hashlib
+
 from tinyurl.models import Url 
 
 try:
@@ -20,21 +21,22 @@ class UrlHandler():
         """given a url, return tinyurl"""
         db_obj = UrlHandler._get_or_create_in_db(originalurl)
     
-        return short_url.encode_url(db_obj.id) 
+        return db_obj.shorturl
 
     @staticmethod
     def _get_or_create_in_db(originalurl):
-        obj, created = Url.objects.update_or_create(originalurl=originalurl, defaults={'originalurl':originalurl})
+        #print ("Original url is {} type {}".format(originalurl, type(originalurl)))
+        #shorturl = short_url.encode_url(44) # originalurl
+        shorturl = hashlib.md5(originalurl.encode('utf-8')).hexdigest()[-6:]
+        obj, created = Url.objects.update_or_create(shorturl=shorturl, originalurl=originalurl, defaults={'originalurl':originalurl})
         return obj 
 
     @staticmethod
     def get_originalurl(tinurl):
         
-        id = short_url.decode_url(tinurl)
-   
         # attempt to get from Redis cache
-        originalurl = UrlHandler.redis_get(str(id))
-        print ("Url id is {}. Redis returned {}".format(id, originalurl))
+        originalurl = UrlHandler.redis_get(tinurl)
+        print ("Short url is {}. Redis returned {}".format(tinurl, originalurl))
 
         if originalurl:
             return originalurl
@@ -42,10 +44,10 @@ class UrlHandler():
         # not in Redis, fetch from database
         url = None
         try:
-            url = Url.objects.get(id=id)
-            print ("Url id is {}. Postgres returned {}".format(id, url.originalurl))
+            url = Url.objects.get(shorturl=tinurl)
+            print ("Short url is {}. Postgres returned {}".format(tinurl, url.originalurl))
             # cache the response
-            UrlHandler.redis_set(str(id), url.originalurl)        
+            UrlHandler.redis_set(tinurl, url.originalurl)        
         except Url.DoesNotExist:
             print ("Invalid url code")
             return None
