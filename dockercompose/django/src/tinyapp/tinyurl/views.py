@@ -7,13 +7,13 @@ from .lib.tiny import UrlHandler
 
 ## display help
 def index(request):
-	return HttpResponse("""
+    print ("test port {}".format(request.get_port()))
+    return HttpResponse("""
             <p> Usage: 
-            <p> Shorten      ==> http://localhost:8000/maketiny/www.ibm.com
-            <p> Original Url ==> http://localhost:8000/25t52/
-            """
+            <p> Shorten      ==> <a href=http://{0}/maketiny/www.ibm.com>http://{0}/maketiny/www.ibm.com</a>
+            <p> Original Url ==> <a href=http://{0}/bcfc7b/>http://{0}/bcfc7b</a>
+            """.format(request.get_host(), request.get_port())
             )
-
 
 # Create your views here.
 def url_detail_view(request):

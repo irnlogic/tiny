@@ -2,20 +2,28 @@
 <html>
 <head>
     <title>
-        My base template
+       Tiny url home
     </title>
+    <style type=text/css>
+    #t  {color:blue}
+    #c {
+        font-family:arial;
+        color:blue
+    }
+    </style>
 </head>
 
 <body>
 
- <p>
+ <p id='t'>
      {{title}}
 </p>   
 
-
+<p id='c'>
    {% block content %}
    {% endblock %}
-  
+</p>
+
 </body>
 
 </html>

@@ -6,7 +6,7 @@ from tinyurl.models import Url
 try:
     import redis
 except ModuleNotFoundError:
-    print ('Warning: You are attempting to run tinyapp without caching/redis module')
+    print ('Warning: You are attempting to run tinyapp without Redis module')
 
 try:
     g_redis = redis.Redis(host='redis', port=6379, db=0, decode_responses=True)
