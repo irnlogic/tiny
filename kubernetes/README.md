@@ -8,7 +8,7 @@ Push your docker images to a hub for use in Kubernetes cluster.
 * On a command prompt run 'docker login', enter your credentials 
 
 ### push redis image
-cd to directory tiny/dockercompose/redis
+cd into directory tiny/dockercompose/redis
 
  ```
  docker build . -t <yourdockerhubusername>/redis:1.0
@@ -16,7 +16,7 @@ cd to directory tiny/dockercompose/redis
  ```
  
  ### push postgres image
-cd to directory tiny/dockercompose/postgres
+cd into directory tiny/dockercompose/postgres
 
  ```
  docker build . -t <yourdockerhubusername>/postgres:1.0
@@ -24,15 +24,15 @@ cd to directory tiny/dockercompose/postgres
  ```
  
   ### push frontend image
-cd to directory tiny/dockercompose/django
+cd into directory tiny/dockercompose/django
 
  ```
  docker build . -t <yourdockerhubusername>/djangotinyurl:1.0
  docker push  <yourdockerhubusername>/djangotinyurl:1.0
  ```
  
-## Deploy in gcloud
-Alternatively you may deploy in another Kubernetes cluster, where you have kubectl access!
+## Deploy in Google Cloud Kubernetes
+Alternatively you may deploy in another Kubernetes cluster, where you have [kubectl](https://kubernetes.io/docs/reference/kubectl/overview/) access!
 
 ### Prerequesites
 Please be aware you may incur charges for use of Google Cloud. If you do not care to make your endpoint publically available / not interested in high scalability experiments etc at this time, [Minkube](https://kubernetes.io/docs/setup/learning-environment/minikube/), which can can run on your laptop is a good option.
@@ -70,7 +70,7 @@ git clone https://github.com/irnlogic/tiny.git
  kubectl create -f frontend-service.yaml
 ```
 
-Deployments and services will be created in a few minutes including a loadbalancer service for frontend.
+Deployments and services will be created in a few minutes including a loadbalancer service for exposing Tinurl frontend to public internet.
 
 Now list services you deployed in Kubernetes
 ```
@@ -83,6 +83,6 @@ NAME             TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)
 frontendxxxx   ClusterIP   11.11.345.22   191.51.245.21   8001/TCP
 ```
 
-You should now be able start Tinuurl app ! -> http://EXTERNAL-IP:8001 (replace 'EXTERNAL-IP' with ip you get above)
+You should now be able start Tinyurl app using public IP ! -> http://EXTERNAL-IP:8001 (replace 'EXTERNAL-IP' with ip you get above)
 
 Enjoy!
