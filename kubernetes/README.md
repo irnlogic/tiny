@@ -76,9 +76,11 @@ kubectl get services
 ```
 
 Among others you should see something like the following:
+```
 NAME             TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)
 frontendxxxx   ClusterIP   11.11.345.22   191.51.245.21   8001/TCP
+```
 
-You should now be able start Tinuurl app ! -> http://EXTERNAL-IP:8001 
+You should now be able start Tinuurl app ! -> http://EXTERNAL-IP:8001 (replace 'EXTERNAL-IP' with ip you get above)
 
 Enjoy!
