@@ -35,7 +35,7 @@ cd into directory tiny/dockercompose/django
 Alternatively you may deploy in another Kubernetes cluster, where you have [kubectl](https://kubernetes.io/docs/reference/kubectl/overview/) access!
 
 ### Prerequesites
-Please be aware you may incur charges for use of Google Cloud. If you do not care to make your endpoint publically available / not interested in high scalability experiments etc at this time, [Minkube](https://kubernetes.io/docs/setup/learning-environment/minikube/), which can can run on your laptop is a good option.
+Please be aware you may incur charges for use of Google Cloud. If you do not care to make your endpoint publically available / not interested in high scalability experiments etc at this time, [Minkube](https://kubernetes.io/docs/setup/learning-environment/minikube/), which can run in your laptop is a good option.
 
 * Register with <https://cloud.google.com> 
 * Complete the 'Before you begin' section here ->  <https://cloud.google.com/kubernetes-engine/docs/tutorials/hello-app>. 
@@ -83,6 +83,6 @@ NAME             TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)
 frontendxxxx   ClusterIP   11.11.345.22   191.51.245.21   8001/TCP
 ```
 
-You should now be able start Tinyurl app using public IP ! -> http://EXTERNAL-IP:8001 (replace 'EXTERNAL-IP' with ip you get above)
+You should now be able start the Tinyurl app using public IP ! -> http://EXTERNAL-IP:8001 (replace 'EXTERNAL-IP' with ip you get above)
 
 Enjoy!
