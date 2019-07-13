@@ -35,6 +35,8 @@ cd to directory tiny/dockercompose/django
 Alternatively you may deploy in another Kubernetes cluster, where you have kubectl access!
 
 ### Prerequesites
+Please be aware you may incur charges for use of Google Cloud. If you do not care to make your endpoint publically available / not interested in high scalability experiments etc at this time, [Minkube](https://kubernetes.io/docs/setup/learning-environment/minikube/), which can can run on your laptop is a good option.
+
 * Register with <https://cloud.google.com> 
 * Complete the 'Before you begin' section here ->  <https://cloud.google.com/kubernetes-engine/docs/tutorials/hello-app>. 
 Make sure to activate and open the Google Cloud Shell. Skip Step 1, 2 etc!
@@ -68,7 +70,7 @@ git clone https://github.com/irnlogic/tiny.git
  kubectl create -f frontend-service.yaml
 ```
 
-Deployments and services will be created in a few minutes including a oadbalancer service for frontend.
+Deployments and services will be created in a few minutes including a loadbalancer service for frontend.
 
 Now list services you deployed in Kubernetes
 ```
