@@ -32,38 +32,41 @@ cd to directory tiny/dockercompose/django
  ```
  
 ## Deploy in gcloud
-Alternatively you may deploy in any Kubernetes cluster, where you have kubectl access
+Alternatively you may deploy in another Kubernetes cluster, where you have kubectl access!
 
 ### Prerequesites
-Register with <https://cloud.google.com> and complete the 'Before you begin' section here ->  <https://cloud.google.com/kubernetes-engine/docs/tutorials/hello-app>. 
+* Register with <https://cloud.google.com> 
+* Complete the 'Before you begin' section here ->  <https://cloud.google.com/kubernetes-engine/docs/tutorials/hello-app>. 
 Make sure to activate and open the Google Cloud Shell. Skip Step 1, 2 etc!
 
-Create a Kubernetes cluster with 3 nodes
+* Create a Kubernetes cluster with 3 nodes
 ```
 gcloud container clusters create tinyurl-cluster --num-nodes=3
 ```
 
 If you are using another provider, please be sure you can run kubectl and have credentials to access your Kubernetes cluster
 
-On Google Cloud Shell clone the repo so you have access to our Kubernetes deployment descriptors
+* On Google Cloud Shell, clone the repo so you have access to our Kubernetes deployment descriptors
+```
 git clone https://github.com/irnlogic/tiny.git
-cd into folder tiny/kubernetes
+```
+* cd into folder tiny/kubernetes
 
 ## deploy redis
-'''
+```
  kubectl create -f redis-deployment.yaml
  kubectl create -f redis-service.yaml
-'''
+```
 ## deploy postgres
-'''
+```
  kubectl create -f postgres-deployment.yaml
  kubectl create -f postgres-service.yaml
-'''
+```
 ## deploy frontend
-'''
+```
  kubectl create -f frontend-deployment.yaml
  kubectl create -f frontend-service.yaml
-'''
+```
 
 Deployments and services will be created in a few minutes including a oadbalancer service for frontend.
 
@@ -76,6 +79,6 @@ Among others you should see something like the following:
 NAME             TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)
 frontendxxxx   ClusterIP   11.11.345.22   191.51.245.21   8001/TCP
 
-You can now start Tinuurl app http://191.51.245.21:8001
+You should now be able start Tinuurl app ! -> http://EXTERNAL-IP:8001 
 
 Enjoy!
