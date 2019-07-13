@@ -42,10 +42,15 @@ Please be aware you may incur charges for use of Google Cloud. If you do not car
 Make sure to activate and open the Google Cloud Shell. Skip Step 1, 2 etc!
 
 * Create a Kubernetes cluster with 3 nodes
+Zone below is chosen as 'us-west1-b', please choose a zone in your geographic vicinity 
 ```
-gcloud container clusters create tinyurl-cluster --num-nodes=3
+gcloud container clusters create tinyurl-cluster --num-nodes=3 --zone=us-west1-b
 ```
-
+You should see something like the following after success
+```
+NAME             LOCATION    MASTER_VERSION  MASTER_IP      MACHINE_TYPE   NODE_VERSION   NUM_NODES  STATUS
+tinyurl-cluster  us-west1-b  1.12.8-gke.10   34.83.105.229  n1-standard-1  1.12.8-gke.10  3          RUNNING
+```
 If you are using another provider, please be sure you can run kubectl and have credentials to access your Kubernetes cluster
 
 * On Google Cloud Shell, clone the repo so you have access to our Kubernetes deployment descriptors
@@ -53,7 +58,11 @@ If you are using another provider, please be sure you can run kubectl and have c
 git clone https://github.com/irnlogic/tiny.git
 ```
 * cd into folder tiny/kubernetes
-
+```
+cd tiny/kubernetes
+```
+Replace the docker image names in the 3 deployment descriptors (xxxx-deployment.yaml files) before running commands below. 
+e.g. replace 'rnlogic/postgres' with '<yourdockerhubusername>/postgres'
 ## deploy redis
 ```
  kubectl create -f redis-deployment.yaml
@@ -61,6 +70,7 @@ git clone https://github.com/irnlogic/tiny.git
 ```
 ## deploy postgres
 ```
+ kubectl create -f postgres-configmap.yaml
  kubectl create -f postgres-deployment.yaml
  kubectl create -f postgres-service.yaml
 ```
@@ -79,8 +89,11 @@ kubectl get services
 
 Among others you should see something like the following:
 ```
-NAME             TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)
-frontendxxxx   ClusterIP   11.11.345.22   191.51.245.21   8001/TCP
+NAME         TYPE           CLUSTER-IP     EXTERNAL-IP   PORT(S)          AGE
+frontend     LoadBalancer   10.38.14.217   33.230.6.53   8001:30080/TCP   58s
+kubernetes   ClusterIP      10.98.2.1      <none>        443/TCP          12m
+postgres     ClusterIP      10.98.8.269    <none>        5432/TCP         2m8s
+redis        ClusterIP      10.96.11.24    <none>        6379/TCP         3m57s
 ```
 
 You should now be able start the Tinyurl app using public IP ! -> http://EXTERNAL-IP:8001 (replace 'EXTERNAL-IP' with ip you get above)
