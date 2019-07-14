@@ -60,7 +60,7 @@ git clone https://github.com/irnlogic/tiny.git
 cd tiny/kubernetes
 ```
 ***Replace the docker image names inside the 3 deployment descriptors (xxxx-deployment.yaml files) before running commands below.**
-e.g. replace 'irnlogic/postgres' with '<yourdockerhubusername>/postgres'.
+e.g. replace 'irnlogic/postgres' with your_dockerhub_username/postgres'.
 Alternatively you may leave things as is if you have not changed code.
 ## deploy redis
 ```
