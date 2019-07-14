@@ -1,15 +1,13 @@
 # Deploying Tinurl app on Kubernetes
 
-Push your docker images to a hub for use in Kubernetes cluster. 
-
-## Push images to docker hub
-### prequesites
+## Push your docker images to docker hub for use in Kubernetes 
+### Prerequesites
 * Register with https://hub.docker.com/
 * On a command prompt run 'docker login', enter your credentials 
 
 ### push redis image
 cd into directory tiny/dockercompose/redis
-
+Build and then push image to docker hub like so
  ```
  docker build . -t <yourdockerhubusername>/redis:1.0
  docker push  <yourdockerhubusername>/redis:1.0
@@ -35,7 +33,7 @@ cd into directory tiny/dockercompose/django
 Alternatively you may deploy in another Kubernetes cluster, where you have [kubectl](https://kubernetes.io/docs/reference/kubectl/overview/) access!
 
 ### Prerequesites
-Please be aware you may incur charges for use of Google Cloud. If you do not care to make your endpoint publically available / not interested in high scalability experiments etc at this time, [Minkube](https://kubernetes.io/docs/setup/learning-environment/minikube/), which can run in your laptop is a good option.
+Please be aware you may incur charges for use of Google Cloud. If you do not care to make your endpoint publically available / run scalability experiments at this time, [Minkube](https://kubernetes.io/docs/setup/learning-environment/minikube/), which can run in your laptop is a good option.
 
 * Register with <https://cloud.google.com> 
 * Complete the 'Before you begin' section here ->  <https://cloud.google.com/kubernetes-engine/docs/tutorials/hello-app>. 
@@ -46,7 +44,7 @@ Zone below is chosen as 'us-west1-b', please choose a zone in your geographic vi
 ```
 gcloud container clusters create tinyurl-cluster --num-nodes=3 --zone=us-west1-b
 ```
-You should see something like the following after success
+You should see something like after success
 ```
 NAME             LOCATION    MASTER_VERSION  MASTER_IP      MACHINE_TYPE   NODE_VERSION   NUM_NODES  STATUS
 tinyurl-cluster  us-west1-b  1.12.8-gke.10   34.83.105.229  n1-standard-1  1.12.8-gke.10  3          RUNNING
@@ -80,7 +78,7 @@ e.g. replace 'rnlogic/postgres' with '<yourdockerhubusername>/postgres'
  kubectl create -f frontend-service.yaml
 ```
 
-Deployments and services will be created in a few minutes including a loadbalancer service for exposing Tinurl frontend to public internet.
+Deployments and services will be created in a few minutes including a loadbalancer service, which exposes Tinurl frontend to public internet.
 
 Now list services you deployed in Kubernetes
 ```
@@ -98,4 +96,3 @@ redis        ClusterIP      10.96.11.24    <none>        6379/TCP         3m57s
 
 You should now be able start the Tinyurl app using public IP ! -> http://EXTERNAL-IP:8001 (replace 'EXTERNAL-IP' with ip you get above)
 
-Enjoy!
