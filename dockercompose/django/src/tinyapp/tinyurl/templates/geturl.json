@@ -1,20 +1,9 @@
 <!docktype html>
 <html>
-<head>
-    <title>
-        My base template
-    </title>
-</head>
-
+<head><title>Tinyurl</title></head>
 <body>
-
  <p>
  {{tinyurl}} : {{originalurl}} 
 </p>   
-
-   {% block content %}
-   {% endblock %}
-  
 </body>
-
 </html>

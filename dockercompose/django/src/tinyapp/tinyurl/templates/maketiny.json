@@ -2,19 +2,12 @@
 <html>
 <head>
     <title>
-        My base template
+        Tinurl
     </title>
 </head>
-
 <body>
-
  <p>
   {{originalurl}} ==> {{tinyurl}}
-</p>   
-
-   {% block content %}
-   {% endblock %}
-  
+</p>     
 </body>
-
 </html>

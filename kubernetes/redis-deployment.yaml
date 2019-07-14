@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: master
-        image: irnlogic/redis  # or just image: redis
+        image: irnlogic/redis:1.0  # or just image: redis
         resources:
           requests:
             cpu: 100m

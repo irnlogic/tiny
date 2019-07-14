@@ -1,12 +1,19 @@
 
 import hashlib
+import logging 
+import time
+import random
 
 from tinyurl.models import Url 
+
+#enable logging
+logging.basicConfig()
+logging.getLogger().setLevel(logging.INFO)
 
 try:
     import redis
 except ModuleNotFoundError:
-    print ('Warning: You are attempting to run tinyapp without Redis module')
+    logging.error ("Redis module missing")
 
 try:
     g_redis = redis.Redis(host='redis', port=6379, db=0, decode_responses=True)
@@ -18,40 +25,81 @@ class UrlHandler():
 
     @staticmethod
     def get_tinyurl(originalurl):
-        """given a url, return tinyurl"""
+        """Given a url, return tinyurl, create if necessary.
+        Args:
+            originalurl: url to shorten.
+
+        Returns:
+            Returns short url
+        """        
+     
+        logging.debug("Creating short url for {}".format(originalurl))
+        start = time.time()
         db_obj = UrlHandler._get_or_create_in_db(originalurl)
-    
+        end = time.time()
+        logging.info("Tinurl created {} in {} in seconds".format(db_obj.shorturl, end-start))
         return db_obj.shorturl
 
     @staticmethod
     def _get_or_create_in_db(originalurl):
-        #print ("Original url is {} type {}".format(originalurl, type(originalurl)))
-        #shorturl = short_url.encode_url(44) # originalurl
-        shorturl = hashlib.md5(originalurl.encode('utf-8')).hexdigest()[-6:]
+        """
+        Helper function to get or create tiny url
+        Generates 32 bit md5 hash and returns right most 6 characters as tiny url code
+        In case of collision, it shifts left through the md5 hash until an available 6 character window is found
+        Args:
+            originalurl: Tthe url to shorten.
+
+        Returns:
+            Returns short url
+        """            
+
+        md5hash = hashlib.md5(originalurl.encode('utf-8')).hexdigest()
+        shorturl = md5hash[-6:]
         obj, created = Url.objects.update_or_create(shorturl=shorturl, originalurl=originalurl, defaults={'originalurl':originalurl})
+        
+        # handle collisions, make 10 attempts
+        # shift left through the md5 if the 6 character code chosen so far is taken by a different url
+        max_tries = 16
+        while obj.originalurl != originalurl and max_tries<=10:
+            shorturl = md5hash[-6-max_tries:-max_tries]
+            obj, created = Url.objects.update_or_create(shorturl=shorturl, originalurl=originalurl, defaults={'originalurl':originalurl})
+            logging.info('Collision occured, {} resolution attempts so far'.format(max_tries))
+            max_tries += 1
+
         return obj 
 
     @staticmethod
     def get_originalurl(tinurl):
-        
-        # attempt to get from Redis cache
-        originalurl = UrlHandler.redis_get(tinurl)
-        print ("Short url is {}. Redis returned {}".format(tinurl, originalurl))
+        """
+        Fetch original url
+        Looks up the tinyurl code in Redis cache before going to Postgres database
+        Args:
+            tinurl: tiny url code.
 
+        Returns:
+            Returns the orginal url
+        """    
+        logging.debug ("Original url requested for {}".format(tinurl))
+        
+        # attempt to lookup  Redis cache
+        start = time.time()
+        originalurl = UrlHandler.redis_get(tinurl)
         if originalurl:
+            logging.info ("Cache hit. Redis returned url {} in {} seconds".format(originalurl, time.time()-start))
             return originalurl
 
+        logging.info ("Cache miss for {}".format(tinurl))
         # not in Redis, fetch from database
         url = None
         try:
             url = Url.objects.get(shorturl=tinurl)
-            print ("Short url is {}. Postgres returned {}".format(tinurl, url.originalurl))
             # cache the response
             UrlHandler.redis_set(tinurl, url.originalurl)        
         except Url.DoesNotExist:
-            print ("Invalid url code")
+            logging.error ("Invalid url code")
             return None
 
+        logging.info ("Postgres returned url {} in {} seconds".format(url.originalurl, time.time()-start) )
         return url.originalurl
 
     @staticmethod

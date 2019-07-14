@@ -3,15 +3,16 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from tinyurl.models import Url 
 from .lib.tiny import UrlHandler
-
+import time
 
 ## display help
 def index(request):
-    print ("test port {}".format(request.get_port()))
+    "Render a simple help page"
     return HttpResponse("""
-            <p> Usage: 
+            <p> Usage example, copy paste examples in your browswer window and experiment: 
             <p> Shorten      ==> <a href=http://{0}/maketiny/www.ibm.com>http://{0}/maketiny/www.ibm.com</a>
             <p> Original Url ==> <a href=http://{0}/bcfc7b/>http://{0}/bcfc7b</a>
+            
             """.format(request.get_host(), request.get_port())
             )
 
@@ -19,7 +20,6 @@ def index(request):
 def url_detail_view(request):
     url = Url.objects.get(id=1)
     context = {'originalurl': url.originalurl}
-    #context = {'object': url}
     return render(request, "detail.html", context)
 
 ORIGINAL_URL = 'originalurl'
@@ -27,6 +27,7 @@ TINY_URL = 'tinyurl'
 
 ## make tiny url
 def make_tiny(request, url=None):
+
     if url:
         tinyurl = UrlHandler.get_tinyurl(url)
         context = {ORIGINAL_URL: url, 'tinyurl': get_full_url(request, tinyurl) }
@@ -37,6 +38,7 @@ def make_tiny(request, url=None):
   
 ## given the url code return tinyurl
 def get_original(request, tinycode=None):
+
     context = {}
     context[TINY_URL] = ''
     context[ORIGINAL_URL] = ''
