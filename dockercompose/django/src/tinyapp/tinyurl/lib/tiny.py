@@ -59,7 +59,7 @@ class UrlHandler():
         
         # handle collisions, make 10 attempts
         # shift left through the md5 if the 6 character code chosen so far is taken by a different url
-        max_tries = 16
+        max_tries = 1
         while obj.originalurl != originalurl and max_tries<=10:
             shorturl = md5hash[-6-max_tries:-max_tries]
             obj, created = Url.objects.update_or_create(shorturl=shorturl, originalurl=originalurl, defaults={'originalurl':originalurl})
