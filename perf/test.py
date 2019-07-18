@@ -7,7 +7,7 @@ from multiprocessing import Pool
 
 urls = [ [{'url':'www.test.com/{}'.format(str(v*dataset))} for v in range(100) ] for dataset in range (1,2)]
 
-host = '35.230.2.53:8001'
+host = '45.230.2.53:8001'
 #host = 'localhost:3000'
 
 def make_tiny(url, host):
