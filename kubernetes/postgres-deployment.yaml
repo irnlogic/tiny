@@ -16,14 +16,20 @@ spec:
     spec:
       containers:
       - name: master
-        image: irnlogic/postgres:1.0  # or just image: redis
+        image: irnlogic/postgres:latest  # or just image: redis
         resources:
           requests:
             cpu: 100m
             memory: 100Mi
         ports:
         - containerPort: 5432
-
         envFrom:
             - configMapRef:
                 name: postgres-config
+        volumeMounts:
+            - mountPath: /var/lib/postgresql/
+              name: postgredb                
+      volumes:
+        - name: postgredb
+          persistentVolumeClaim:
+            claimName: postgres-disk                

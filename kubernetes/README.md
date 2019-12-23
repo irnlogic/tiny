@@ -64,14 +64,15 @@ e.g. replace 'irnlogic/postgres' with your_dockerhub_username/postgres'.
 Alternatively you may leave things as is if you have not changed code.
 ## deploy redis
 ```
- kubectl create -f redis-deployment.yaml
- kubectl create -f redis-service.yaml
+ kubectl apply -f redis-deployment.yaml
+ kubectl apply -f redis-service.yaml
 ```
 ## deploy postgres
 ```
- kubectl create -f postgres-configmap.yaml
- kubectl create -f postgres-deployment.yaml
- kubectl create -f postgres-service.yaml
+ kubectl apply -f postgres-pvc.yaml
+ kubectl apply -f postgres-configmap.yaml
+ kubectl apply -f postgres-deployment.yaml
+ kubectl apply -f postgres-service.yaml
 ```
 ## deploy frontend
 ```
