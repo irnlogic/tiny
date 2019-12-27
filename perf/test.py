@@ -1,13 +1,11 @@
 import urllib.request
-import time
+import sys, time, argparse
 import re 
 from multiprocessing import Pool 
 
 
 
-urls = [ [{'url':'www.test.com/{}'.format(str(v*dataset))} for v in range(100) ] for dataset in range (1,2)]
-
-host = '45.230.2.53:8001'
+host = '35.230.2.53:8001'
 #host = 'localhost:3000'
 
 def make_tiny(url, host):
@@ -25,8 +23,7 @@ def get_url(tiny, host):
     return g.group(1)
 
 
-def test_create(urls):
-
+def create_tinyurls(urls):
     start = time.time()
     for url in urls:
         start1 = time.time()
@@ -42,8 +39,7 @@ def test_create(urls):
     return urls
    
 
-def test_get(urls):
-    print ('verifying')
+def test_fetch(urls):
     start = time.time()
     for url in urls:
         start1 = time.time()
@@ -56,46 +52,76 @@ def test_get(urls):
     duration_get = end-start
     return urls
 
+def run_tests(count, num_processes, repeat_fetch, create_urls):
+    print ("Number of processes1 {}".format(num_processes))
+    urls = [ [{'url':'www.test.com/{}'.format(str(v*dataset))} for v in range(count) ] for dataset in range (1,1+num_processes)]
+    total_urls = sum( (len (u) for u in urls ) ) 
 
+    # test make tiny url
+    urls_updated=[]
+    start = time.time()
 
-#duration_create = get_create_tester(host)(urls[0])
-#duration_get = get_fetch_tester(host)(urls[0])
+    print("\nTest url creation")
+    if num_processes == 1:
+        print('In process execution: creating urls')
+        urls_updated = [create_tinyurls(u) for u in urls]
+    else:
+        print('Multi-process execution: creating urls')
+        with Pool(num_processes) as p:
+            urls_updated = p.map( create_tinyurls, urls)
+    end = time.time()
+    create_duration=end-start
+    print("Creating tinyurls: elapsed time {}\n".format(create_duration))
 
-#print ('create throughput {}'.format(duration_create/len(urls[0])))
-#print ('get throughput {}'.format(duration_get/len(urls[0])))
+    ## test url fetch
+    ## warm up cache
+    print ("\nWarming up cache")
+    with Pool(num_processes) as p:
+        d = p.map( test_fetch, urls_updated)
 
-total_urls = sum( (len (u) for u in urls ) ) 
+    print("\nTesting fetch")
+    start = time.time()
+    for _ in range(repeat_fetch):
+        if num_processes == 1:
+            print ('single threaded fetch')
+            d = [test_fetch(u) for u in urls_updated]
+        else:
+            with Pool(num_processes) as p:
+                d = p.map( test_fetch, urls_updated)
+    end = time.time()
+    print(d)
 
-# test make tiny url
-urls_updated=[]
-start = time.time()
-with Pool(5) as p:
-    urls_updated = p.map( test_create, urls)
-end = time.time()
-print(urls_updated)
+    get_duration=end-start
 
-create_duration=end-start
-print("Creating tinyurls: elapsed time {}".format(create_duration))
+    print("\n----------- Test summary ---------------------------------")
+    print("Creating tinyurls: elapsed time {}".format(get_duration))
+    print ("Total urls {}".format( total_urls )) 
+    print ("Creating tinyurls throughput {}".format (total_urls/create_duration) )
+    print ("Fetch tinyurls throughput {} . ({} repeats)".format ((total_urls*repeat_fetch)/get_duration, repeat_fetch) )
+    print("----------------------------------------------------------\n")
 
-## test url fetch
-## warm up cache
-with Pool(5) as p:
-    d = p.map( test_get, urls_updated)
+def main():
+    parser = argparse.ArgumentParser(description="Run tiny performance tests")
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument("-c", "--create", action="store_true")
+    group.add_argument("-f", "--fetch", action="store_true")
+    parser.add_argument("n", type=int, help="the number of creates or fetches")
+    parser.add_argument("p", type=int, help="number of processes", default=1)
+    parser.add_argument("repeat_fetch", type=int, help="number of repeat fetches", default=1)
 
-start = time.time()
-with Pool(5) as p:
-    d = p.map( test_get, urls_updated)
-end = time.time()
-print(d)
+    args = parser.parse_args()
 
-get_duration=end-start
+    if args.create:
+           print ("Perf test: create {} urls ".format(args.n))
+    elif args.fetch:
+           print ("Perf test: fetche {} urls".format(args.n))
+    else:
+        print ("Not a valid request")
+        exit()
 
+    num_processes = args.p
 
-print("Creating tinyurls: elapsed time {}".format(get_duration))
+    run_tests(args.n, num_processes, args.repeat_fetch, True)
 
-
-print ("Total urls {}".format( total_urls )) 
-print ("Creating tinyurls throughput {}".format (total_urls/create_duration) )
-
-
-print ("Fetch tinyurls throughput {}".format (total_urls/get_duration) )
+if __name__ == "__main__":
+    main()

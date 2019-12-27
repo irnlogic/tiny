@@ -16,10 +16,10 @@ spec:
     spec:
       containers:
       - name: master
-        image: irnlogic/redis:1.0  # or just image: redis
+        image: irnlogic/redis  # or just image: redis
         resources:
           requests:
-            cpu: 100m
-            memory: 100Mi
+            cpu: 1000m
+            memory: 128Mi
         ports:
         - containerPort: 6379
