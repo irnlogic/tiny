@@ -4,6 +4,7 @@
 ### Prerequesites
 * Register with https://hub.docker.com/
 * On a command prompt run 'docker login', enter your credentials 
+* git clone https://github.com/irnlogic/tiny
 
 ### push redis image
 cd into directory tiny/dockercompose/redis
@@ -76,8 +77,8 @@ Alternatively you may leave things as is if you have not changed code.
 ```
 ## deploy frontend
 ```
- kubectl create -f frontend-deployment.yaml
- kubectl create -f frontend-service.yaml
+ kubectl apply -f frontend-deployment.yaml
+ kubectl apply -f frontend-service.yaml
 ```
 
 Deployments and services will be created in a few minutes including a loadbalancer service, which exposes Tinurl frontend to public internet.
